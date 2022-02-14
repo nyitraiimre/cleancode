@@ -19,41 +19,27 @@ public class WeatherMain {
             File file = main.getFileFromResource(fileName);
             List<String> data = printAndGetFileContent(file);
             if (data != null && !data.isEmpty()) {
-                Double beforePrevMxT = null;
-                Double prevMxT = null;
-                double lastMaxTDiff = 0;
-                int lastMaxTDiffRow = 0;
+                double minDiff = Double.MAX_VALUE;
+                int minDiffRow = 0;
                 for(String line : data) {
-                    //System.out.println("line:" + line);
+                    System.out.println("line:" + line);
                     if(!line.isBlank()) {
                         String[] array = line.split("\\s+");
-                        if(main.isNumeric(array[1]) && main.isNumeric(array[2])) {
+                        if(main.isNumeric(array[1]) && main.isNumeric(array[2]) && main.isNumeric(array[3])) {
                             int row = Integer.valueOf(array[1]);
                             double mxT = Double.valueOf(array[2]);
-                            //System.out.println("row:" + row + " mxT:" + mxT + " prevMxT:" + prevMxT + " beforePrevMxT:" + beforePrevMxT);
-                            if(prevMxT == null) {
-                                prevMxT = mxT;
-                                continue;
-                            } else {
-                                if (beforePrevMxT == null) {
-                                    beforePrevMxT = prevMxT;
-                                    prevMxT = mxT;
-                                    continue;
-                                }
+                            double mnT = Double.valueOf(array[3]);
+                            double diff = mxT - mnT;
+                            if (diff < minDiff) {
+                                minDiff = diff;
+                                minDiffRow = row;
                             }
-                            double diff = Math.abs(mxT - prevMxT) + Math.abs(prevMxT - beforePrevMxT);
-                            if (diff >= lastMaxTDiff) {
-                                lastMaxTDiff = diff;
-                                lastMaxTDiffRow = row;
-                            }
-                            beforePrevMxT = prevMxT;
-                            prevMxT = mxT;
                         } else {
                             System.out.println("Wrong dataline found : " + line);
                         }
                     }
                 }
-                System.out.println("Result lastMaxTDiffRow: " + lastMaxTDiffRow );
+                System.out.println("Result minDiffRow: " + minDiffRow );
             } else {
                 System.out.println("No data found ! (" + fileName +")");
             }
