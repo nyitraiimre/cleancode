@@ -3,49 +3,53 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class WeatherMain {
-    private Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
+
+    private static final Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
 
     public static void main(String[] args) {
-        WeatherMain main = new WeatherMain();
+        WeatherMain weatherMain = new WeatherMain();
         String fileName = "datamunging/weather.dat";
         System.out.println("Resource filename: " + fileName);
         try {
-            File file = main.getFileFromResource(fileName);
-            List<String> data = printAndGetFileContent(file);
-            if (data != null && !data.isEmpty()) {
-                double minDiff = Double.MAX_VALUE;
-                int minDiffRow = 0;
-                for(String line : data) {
-                    System.out.println("line:" + line);
-                    if(!line.isBlank()) {
-                        String[] array = line.split("\\s+");
-                        if(main.isNumeric(array[1]) && main.isNumeric(array[2]) && main.isNumeric(array[3])) {
-                            int row = Integer.valueOf(array[1]);
-                            double mxT = Double.valueOf(array[2]);
-                            double mnT = Double.valueOf(array[3]);
-                            double diff = mxT - mnT;
-                            if (diff < minDiff) {
-                                minDiff = diff;
-                                minDiffRow = row;
-                            }
-                        } else {
-                            System.out.println("Wrong dataline found : " + line);
-                        }
-                    }
-                }
-                System.out.println("Result minDiffRow: " + minDiffRow );
-            } else {
-                System.out.println("No data found ! (" + fileName +")");
-            }
+            File file = weatherMain.getFileFromResource(fileName);
+            List<String> dataLines = weatherMain.printAndGetFileContent(file);
+            List<WeatherItem> weatherItems = weatherMain.parseDataLines(dataLines);
+            WeatherItem  itemWithMinTempDiff = weatherMain.findItemWithMinTempDiff(weatherItems);
+            System.out.println("Result itemWithMinTempDiff: " + itemWithMinTempDiff.getRowNumber());
         } catch (URISyntaxException e) {
             e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
+
+    private WeatherItem findItemWithMinTempDiff(List<WeatherItem> weatherItems) {
+        return weatherItems
+                .stream()
+                .min(Comparator.comparing(WeatherItem::getTempDiff))
+                .orElseThrow(NoSuchElementException::new);
+    }
+
+    private List<WeatherItem> parseDataLines(List<String> dataLines) {
+        List<WeatherItem> weatherItems = new ArrayList<>();
+        for(String line : dataLines) {
+            if(!line.isBlank()) {
+                String[] array = line.split("\\s+");
+                if(WeatherMain.isNumeric(array[1]) && WeatherMain.isNumeric(array[2]) && WeatherMain.isNumeric(array[3])) {
+                    double mxT = Double.valueOf(array[2]);
+                    double mnT = Double.valueOf(array[3]);
+                    weatherItems.add(new WeatherItem(Integer.valueOf(array[1]), mxT, mnT, mxT - mnT));
+                } else {
+                    System.out.println("Wrong dataline found : " + line);
+                }
+            }
+        }
+        return weatherItems;
     }
 
     private File getFileFromResource(String fileName) throws URISyntaxException {
@@ -58,18 +62,14 @@ public class WeatherMain {
         }
     }
 
-    private static List<String> printAndGetFileContent(File file) {
-        List<String> lines = null;
-        try {
-            lines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
-            lines.forEach(System.out::println);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private List<String> printAndGetFileContent(File file) throws IOException {
+        List<String> lines = new ArrayList<>();
+        lines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
+        lines.forEach(System.out::println);
         return lines;
     }
 
-    public boolean isNumeric(String strNum) {
+    public static boolean isNumeric(String strNum) {
         if (strNum == null) {
             return false;
         }
