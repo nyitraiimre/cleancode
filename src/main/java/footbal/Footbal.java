@@ -79,10 +79,10 @@ public class Footbal {
         } else {
             String[] array = dataline.split("\\s+");
             for (int i = 0; i < array.length; i++) {
-                System.out.print(i + "|" + array[i]);
+                System.out.print("|[" + i + "]" + array[i]);
             }
             System.out.println();
-            if (array.length >= 9 && Footbal.isNumeric(array[7]) && Footbal.isNumeric(array[9])) {
+            if (array.length > 9 && Footbal.isNumeric(array[7]) && Footbal.isNumeric(array[9])) {
                 ret = array;
             } else {
                 System.out.println("Wrong dataline found : " + dataline);
