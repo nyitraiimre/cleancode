@@ -66,8 +66,7 @@ public class Footbal {
     }
 
     private List<String> printAndGetFileContent(File file) throws IOException {
-        List<String> lines = new ArrayList<>();
-        lines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
+        List<String> lines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
         lines.forEach(System.out::println);
         return lines;
     }
