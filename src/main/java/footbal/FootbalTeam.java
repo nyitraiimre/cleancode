@@ -39,4 +39,13 @@ public class FootbalTeam {
     public int getGoalDiff() {
         return Math.abs(this.givenGoal / this.receivedGoal);
     }
+
+    @Override
+    public String toString() {
+        return "FootbalTeam{" +
+                "name='" + name + '\'' +
+                ", givenGoal=" + givenGoal +
+                ", receivedGoal=" + receivedGoal +
+                '}';
+    }
 }

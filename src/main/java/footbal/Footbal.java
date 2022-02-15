@@ -22,7 +22,7 @@ public class Footbal {
             File file = getFileFromResource(resourceFile);
             List<String> dataLines = printAndGetFileContent(file);
             List<FootbalTeam> footbalTeams = parseDataLines(dataLines);
-            result = findTeamWithMinGoalDiff(footbalTeams);
+            result = findTeamWithMaxGoalDiff(footbalTeams);
             System.out.println("Result team name: " + result.getName());
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
@@ -31,25 +31,19 @@ public class Footbal {
         return result;
     }
 
-    private FootbalTeam findTeamWithMinGoalDiff(List<FootbalTeam> footbalTeams) {
+    private FootbalTeam findTeamWithMaxGoalDiff(List<FootbalTeam> footbalTeams) {
         return footbalTeams
                 .stream()
-                .min(Comparator.comparing(FootbalTeam::getGoalDiff))
+                .max(Comparator.comparing(FootbalTeam::getGoalDiff))
                 .orElseThrow(NoSuchElementException::new);
     }
 
     private List<FootbalTeam> parseDataLines(List<String> dataLines) {
         List<FootbalTeam> footbalTeams = new ArrayList<>();
         for(String line : dataLines) {
-            if(!line.isBlank()) {
-                String[] array = line.split("\\s+");
-                /*if(FootbalTeam.isNumeric(array[x]) && FootbalTeam.isNumeric(array[x])) {
-                    double givenGoals = Double.valueOf(array[2]);
-                    double receivedGoals = Double.valueOf(array[3]);
-                    footbalTeams.add(new FootbalTeam(array[1]), givenGoals, receivedGoals);
-                } else {
-                    System.out.println("Wrong dataline found : " + line);
-                }*/
+            String[] teamDataArray = checkAndGetDataLineData(line);
+            if(teamDataArray != null) {
+               footbalTeams.add(new FootbalTeam(teamDataArray[2], Integer.valueOf(teamDataArray[7]), Integer.valueOf(teamDataArray[9])));
             }
         }
         return footbalTeams;
@@ -76,5 +70,24 @@ public class Footbal {
             return false;
         }
         return pattern.matcher(strNum).matches();
+    }
+
+    public static String[] checkAndGetDataLineData(String dataline) {
+        String[] ret = null;
+        if (dataline == null || dataline.isBlank()) {
+            ret = null;
+        } else {
+            String[] array = dataline.split("\\s+");
+            for (int i = 0; i < array.length; i++) {
+                System.out.print(i + "|" + array[i]);
+            }
+            System.out.println();
+            if (array.length >= 9 && Footbal.isNumeric(array[7]) && Footbal.isNumeric(array[9])) {
+                ret = array;
+            } else {
+                System.out.println("Wrong dataline found : " + dataline);
+            }
+        }
+        return ret;
     }
 }
