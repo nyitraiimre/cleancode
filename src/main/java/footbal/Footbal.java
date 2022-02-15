@@ -17,8 +17,18 @@ public class Footbal {
     private static final Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
 
     public FootbalTeam getWinnerTeam(String resourceFile) {
-        //TODO impl
-        return new FootbalTeam("x",0,0);
+        FootbalTeam result = null;
+        try {
+            File file = getFileFromResource(resourceFile);
+            List<String> dataLines = printAndGetFileContent(file);
+            List<FootbalTeam> footbalTeams = parseDataLines(dataLines);
+            result = findTeamWithMinGoalDiff(footbalTeams);
+            System.out.println("Result team name: " + result.getName());
+        } catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Findig footbal team failed!",e);
+        }
+        return result;
     }
 
     private FootbalTeam findTeamWithMinGoalDiff(List<FootbalTeam> footbalTeams) {
