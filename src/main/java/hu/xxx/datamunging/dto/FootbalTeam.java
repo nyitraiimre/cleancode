@@ -1,4 +1,8 @@
-package footbal;
+package hu.xxx.datamunging.dto;
+
+import hu.xxx.datamunging.util.FileLineParser;
+
+import java.util.Arrays;
 
 public class FootbalTeam {
 
@@ -10,6 +14,15 @@ public class FootbalTeam {
         this.name = name;
         this.givenGoal = givenGoal;
         this.receivedGoal = receivedGoal;
+    }
+
+    public static FootbalTeam of(String[] dataArray) {
+        if (dataArray.length > 9 && FileLineParser.isNumeric(dataArray[7]) && FileLineParser.isNumeric(dataArray[9])) {
+            return new FootbalTeam(dataArray[2], Integer.valueOf(dataArray[7]), Integer.valueOf(dataArray[9]));
+        } else {
+            System.out.println("Wrong dataline found : " + Arrays.toString(dataArray));
+            return null;
+        }
     }
 
     public String getName() {
@@ -37,7 +50,7 @@ public class FootbalTeam {
     }
 
     public int getGoalDiff() {
-        return Math.abs(this.givenGoal / this.receivedGoal);
+        return Math.abs(this.givenGoal - this.receivedGoal);
     }
 
     @Override
@@ -48,4 +61,5 @@ public class FootbalTeam {
                 ", receivedGoal=" + receivedGoal +
                 '}';
     }
+
 }

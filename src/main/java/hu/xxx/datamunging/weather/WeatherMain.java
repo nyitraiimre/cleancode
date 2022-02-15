@@ -1,3 +1,7 @@
+package hu.xxx.datamunging.weather;
+
+import hu.xxx.datamunging.dto.WeatherItem;
+
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -5,7 +9,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 public class WeatherMain {
 

@@ -1,3 +1,5 @@
+package hu.xxx.datamunging.dto;
+
 public class WeatherItem {
 
     private int rowNumber;

@@ -1,4 +1,6 @@
-package footbal;
+package hu.xxx.datamunging.footbal;
+
+import hu.xxx.datamunging.dto.FootbalTeam;
 
 public class Main {
 
