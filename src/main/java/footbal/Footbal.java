@@ -65,14 +65,14 @@ public class Footbal {
         return lines;
     }
 
-    public static boolean isNumeric(String strNum) {
+    public boolean isNumeric(String strNum) {
         if (strNum == null) {
             return false;
         }
         return pattern.matcher(strNum).matches();
     }
 
-    public static String[] checkAndGetDataLineData(String dataline) {
+    public String[] checkAndGetDataLineData(String dataline) {
         String[] ret = null;
         if (dataline == null || dataline.isBlank()) {
             ret = null;
@@ -82,7 +82,7 @@ public class Footbal {
                 System.out.print("|[" + i + "]" + array[i]);
             }
             System.out.println();
-            if (array.length > 9 && Footbal.isNumeric(array[7]) && Footbal.isNumeric(array[9])) {
+            if (array.length > 9 && isNumeric(array[7]) && isNumeric(array[9])) {
                 ret = array;
             } else {
                 System.out.println("Wrong dataline found : " + dataline);
